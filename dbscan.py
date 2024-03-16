@@ -5,7 +5,8 @@ from matplotlib import pyplot as plt
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
 from sklearn import metrics
 from sklearn.cluster import DBSCAN
-from shared_resources.shared_resources import convert_df_to_numpy, read_localisation_csvdata, get_xy_loc_positions, read_localisation_data
+from shared_resources.shared_resources import convert_df_to_numpy, get_files, get_xy_loc_positions, read_files
+from ConfigReader import ConfigReader
 
 
 
@@ -75,6 +76,10 @@ def count_localizations_per_cluster(cluster_labels: np.ndarray) -> dict[int, int
     return dict(zip(unique_labels, counts))
 
 
+def create_cluster_properties_table():
+    pass
+
+
 def plot_clustered_locs(input_locs: np.ndarray, db_result) -> None:
     """Visualizes DBSCAN clusters and core samples.
 
@@ -86,8 +91,9 @@ def plot_clustered_locs(input_locs: np.ndarray, db_result) -> None:
         input_locs (np.ndarray): Input data containing locations (x, y coordinates).
         db_result: Output of the DBSCAN algorithm run on the input locations.
     """
+    
     cluster_locs = sort_locs_by_cluster(input_locs, db_result)  # Get dictionary of core points per cluster
-
+    plt.figure(2)
     # Define a colormap for clusters (excluding noise)
     cmap = plt.cm.get_cmap("tab10", len(cluster_locs))  # Adjust length for number of clusters
 
@@ -101,13 +107,13 @@ def plot_clustered_locs(input_locs: np.ndarray, db_result) -> None:
         else:
             # Use the cluster label (integer) as the index for the colormap
             plt.plot(locs[:, 0], locs[:, 1], core_marker, markerfacecolor=cmap(cluster), markeredgecolor='k', markersize=4, label=f"Cluster {cluster}")
-
+  
     plt.xlabel("X-coordinate")
     plt.ylabel("Y-coordinate")
     plt.title("Clusters")  # Adjusted title (no noise)
     plt.legend()
     plt.gca().invert_yaxis()  # Invert y-axis for standard convention
-    plt.show()
+    plt.show(block=False)
 
 
 def plot_raw_localisation_image(data: np.ndarray, marker_size: float = 1) -> None:
@@ -125,6 +131,7 @@ def plot_raw_localisation_image(data: np.ndarray, marker_size: float = 1) -> Non
 
 def plot_convex_hull(cluster_localisations:dict, convex_hulls) -> None:
     # Define a colormap for clusters (excluding noise)
+    plt.figure(3)
     cmap = plt.cm.get_cmap("tab10", len(cluster_localisations))  # Adjust length for number of clusters
 
     # Loop through clusters and plot points and convex hulls
@@ -149,37 +156,59 @@ def plot_convex_hull(cluster_localisations:dict, convex_hulls) -> None:
     plt.gca().invert_yaxis()  # Invert y-axis for standard convention
     plt.show()
 
-
-def export_cluster_ouput_csv():
-    pass
-
-def main():
-   
-    ## LOAD HDF5 LOCALISATION FILES
-    dstorm_locs_df = read_localisation_data("Y:\\Ross\\dSTORM\\ross dstorm -2.sld - cell3 - 3_locs_ROI.hdf5")
-   
-    ## LOAD CSV LOCALISATION FILES
-    #dstorm_locs_df = read_localisation_csvdata("C:\\Users\\rscrimgeour\\Desktop\\storm_1_MMStack_Default_final_test.csv")
     
-    dstorm_locs_np = convert_df_to_numpy(dstorm_locs_df)
-    X = get_xy_loc_positions(dstorm_locs_np, 1, 2)
-    
+def run_clustering_anaylsis(config, data):
     ## run DBSCAN
-    db = DBSCAN(eps = 1, min_samples = 150).fit(X)
+    eps = config["DBSCAN_Paramters"]["eps"]
+    min_samples = config["DBSCAN_Paramters"]["eps"]
+
+    db = DBSCAN(eps, min_samples).fit(data)
     labels = db.labels_
 
-    # Number of clusters in labels, ignoring noise if present.
+    # Number of clusters in labels, ignoring noise if present.ALso 
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
     n_noise_ = list(labels).count(-1)
     
     print("Estimated number of clusters: %d" % n_clusters_)
     print("Estimated number of noise points: %d" % n_noise_)
 
-    cluster_localisations = sort_locs_by_cluster(X, db)
+    cluster_localisations = sort_locs_by_cluster(data, db)
     convex_hulls = create_convex_hull(cluster_localisations)
 
-    plot_clustered_locs(X,db)
+    plot_clustered_locs(X, db)
     plot_convex_hull(cluster_localisations, convex_hulls)
+
+    return cluster_localisations, convex_hulls
+
+def create_data_table():
+    pass
+
+def main():
+    
+    config = ConfigReader("ConfigFile.json").get_config()
+    
+    if config["Batch_processing"]:
+        files_to_process = get_files(config["data_folder_path"])
+        for file in files_to_process:
+            dstorm_locs_df = read_files(file, format=".csv")
+            dstorm_locs_np = convert_df_to_numpy(dstorm_locs_df)
+            X = get_xy_loc_positions(dstorm_locs_np, 1, 2)
+            cluster_localisations, convex_hulls = run_clustering_anaylsis(config, X)
+
+            
+
+    else:
+        
+        ## LOAD HDF5 LOCALISATION FILES
+        dstorm_locs_df = dead_files(file, format=".csv")
+    
+        ## LOAD CSV LOCALISATION FILES
+        #dstorm_locs_df = read_localisation_csvdata("C:\\Users\\rscrimgeour\\Desktop\\storm_1_MMStack_Default_final_test.csv")
+        
+        dstorm_locs_np = convert_df_to_numpy(dstorm_locs_df)
+        X = get_xy_loc_positions(dstorm_locs_np, 1, 2)
+        
+        run_clustering(config, X)
 
 if __name__ == "__main__":
     main()

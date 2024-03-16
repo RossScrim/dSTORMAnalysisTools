@@ -1,8 +1,22 @@
 import pandas as pd
 import numpy as np
+import errno
+import os
+
+def get_files(folder_path):
+    """
+    This function retrieves a list of filenames within a specified folder.
+
+     rgs:
+      folder_path (str): Path to the folder containing the files.
+
+    Returns:
+    list: List of filenames within the folder.
+    """
+    return os.listdir(folder_path)
 
 
-def read_localisation_data(filepath: str) -> pd.DataFrame:
+def read_localisation_HDF5(filepath: str) -> pd.DataFrame:
     """Reads localization data from a HDF5 file and returns a pandas DataFrame.
 
     Args:
@@ -26,7 +40,30 @@ def read_localisation_csvdata(filepath: str) -> pd.DataFrame:
     """
 
     return pd.read_csv(filepath)
-    
+
+
+def read_files(file_path: str, format="csv") -> pd.DataFrame:
+    """
+    Reads localization data based on the specified format and file path.
+
+    Args:
+        file_path (str): Path to the data file.
+        format (str): Expected format of the data ("csv" or "hdf5").
+
+    Returns:
+        pd.DataFrame: DataFrame containing localization data.
+
+    Raises:
+        ValueError: If the provided format is not supported.
+    """
+    if format == "csv":
+        file = read_localisation_csvdata(file_path)
+    elif format == "hdf5":
+        file = read_localisation_HDF5(file_path)
+    else:
+        raise ValueError("Unsupported data format:", format)
+    return file
+
 
 def convert_df_to_numpy(pd_locs) -> np.ndarray:
     """Converts specified columns from a pandas DataFrame to a NumPy array.
@@ -55,6 +92,7 @@ def get_xy_loc_positions(data: np.ndarray, x: int, y:int) -> np.ndarray:
   """
   return data[:, [x, y]]
 
+   
 
 if __name__ == "__main__":
     #dstorm_locs_df = read_localisation_csvdata("Y:\\Ross\\dSTORM\\ross dstorm -2.sld - cell3 - 3_locs_ROI.hdf5")
