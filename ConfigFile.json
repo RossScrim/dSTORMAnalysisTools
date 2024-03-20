@@ -1,14 +1,16 @@
 {
     "Mode": 
     {  "Batch": false,
-       "Preview": false,
-       "Single": true
+       "Preview": true
     },   
 
-    "data_folder_path": "",
-    "data_save_path": "",
-    "file_path": "",
-    "file_format": ".csv",
+    "data_folder_path": "C:\\Users\\rscrimgeour\\Desktop\\Test dstrom",
+    "data_save_folder": "C:\\Users\\rscrimgeour\\Desktop\\Test dstrom\\results",
+
+    "preview_file_path": "C:\\Users\\rscrimgeour\\Desktop\\Test dstrom\\ross dstorm -2.sld - cell3 - 3_locs_ROI.hdf5",
+    "file_format": "hdf",
+
+
 
     "DBSCAN_Paramters":
     {
