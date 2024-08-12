@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from scipy.spatial import ConvexHull
 
 
@@ -28,12 +29,25 @@ def sort_locs_by_cluster(input_locs, db_result):
 
 
 def create_convex_hull(cluster_localisations:dict) -> list:
-    if cluster_localisations:
-        cluster_convex_hull = []
-        for cluster, localisations in cluster_localisations.items():
-            if cluster >= 0:
-                cluster_convex_hull.append(ConvexHull(localisations, incremental=True))
-    return cluster_convex_hull 
+    cluster_convex_hull = []
+    if not cluster_localisations:
+        print("No clusters provided.")
+        return cluster_convex_hull
+
+    for cluster, localisations in cluster_localisations.items():
+        if not cluster == -1:
+            print(f"Processing cluster {cluster} with {len(localisations)} points.")
+            if len(localisations) >= 3:
+                try:
+                    hull = ConvexHull(localisations, incremental=False)
+                    cluster_convex_hull.append(hull)
+                    print(f"Convex hull created for cluster {cluster}.")
+                except Exception as e:
+                    print(f"Failed to create ConvexHull for cluster {cluster}: {e}")
+            else:
+                print(f"Cluster {cluster} skipped: insufficient points to form a ConvexHull.")
+
+    return cluster_convex_hull
 
 
 def count_localizations_per_cluster(clusters: dict) -> list:

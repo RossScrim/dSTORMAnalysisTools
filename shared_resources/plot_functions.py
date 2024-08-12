@@ -30,10 +30,9 @@ def plot_clustered_locs(input_locs: np.ndarray, cluster_locs) -> None:
             # Use the cluster label (integer) as the index for the colormap
             plt.plot(locs[:, 0], locs[:, 1], core_marker, markerfacecolor=cmap(cluster), markeredgecolor='k', markersize=4, label=f"Cluster {cluster}")
   
-    plt.xlabel("X-coordinate")
-    plt.ylabel("Y-coordinate")
+    plt.xlabel("X (nm)")
+    plt.ylabel("Y (nm)")
     plt.title("Clusters")  # Adjusted title (no noise)
-    plt.legend()
     plt.gca().invert_yaxis()  # Invert y-axis for standard convention
     plt.show(block=False)
 
@@ -68,12 +67,15 @@ def plot_convex_hull(cluster_localisations:dict, convex_hulls) -> None:
         convex_hull = convex_hulls[cluster]  # Assuming cluster numbering starts from 1 (modify if needed)
         hull_points = locs[convex_hull.vertices]  # Extract hull points
 
+            
+        # Close the hull loop by appending the first point at the end
+        hull_points = np.vstack([hull_points, hull_points[0]])
+
         # Plot convex hull (red dashed line)
         plt.plot(hull_points[:, 0], hull_points[:, 1], 'r-', lw=2, label=f"Convex Hull (Cluster {cluster})")
 
-    plt.xlabel("X-coordinate")
-    plt.ylabel("Y-coordinate")
+    plt.xlabel("X (nm)")
+    plt.ylabel("Y (nm)")
     plt.title("Clusters and Convex Hulls")
-    plt.legend()
     plt.gca().invert_yaxis()  # Invert y-axis for standard convention
     plt.show()

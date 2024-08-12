@@ -1,20 +1,19 @@
 {
     "Mode": 
-    {  "Batch": false,
+    {  
+       "Batch": false,
        "Preview": true
     },   
+    
+    "data_folder_path": "C:\\Users\\rscrimgeour\\Desktop\\Claudia data",
+    "data_save_folder": "C:\\Users\\rscrimgeour\\Desktop\\Claudia data\\results",
 
-    "data_folder_path": "C:\\Users\\rscrimgeour\\Desktop\\Test dstrom",
-    "data_save_folder": "C:\\Users\\rscrimgeour\\Desktop\\Test dstrom\\results",
-
-    "preview_file_path": "C:\\Users\\rscrimgeour\\Desktop\\Test dstrom\\ross dstorm -2.sld - cell3 - 3_locs_ROI.hdf5",
-    "file_format": "hdf",
-
-
+    "preview_file_path": "C:\\Users\\rscrimgeour\\Desktop\\Claudia data\\dorm_2_ps.csv",
+    "file_format": "csv",
 
     "DBSCAN_Paramters":
     {
-        "eps": 0.5,
-        "min_samples": 10
+        "eps": 20,
+        "min_samples": 30
     }
 }
