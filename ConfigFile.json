@@ -1,14 +1,14 @@
 {
     "Mode": 
     {  
-       "Batch": false,
-       "Preview": true
+       "Batch": true,
+       "Preview": false
     },   
     
-    "data_folder_path": "C:\\Users\\rscrimgeour\\Desktop\\Claudia data",
-    "data_save_folder": "C:\\Users\\rscrimgeour\\Desktop\\Claudia data\\results",
+    "data_folder_path": "C:\\Users\\rscrimgeour\\Desktop\\localisations_per_ROI",
+    "data_save_folder": "C:\\Users\\rscrimgeour\\Desktop\\localisations_per_ROI\\Results_HDBSCAN",
 
-    "preview_file_path": "C:\\Users\\rscrimgeour\\Desktop\\Claudia data\\dorm_2_ps.csv",
+    "preview_file_path": "C:\\Users\\rscrimgeour\\Desktop\\localisations_per_ROI\\ut_neg_roi_2_storm_1_MMStack_Default_final.csv",
     "file_format": "csv",
 
     "DBSCAN_Paramters":
