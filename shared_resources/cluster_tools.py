@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 from scipy.spatial import ConvexHull
 
 
@@ -19,6 +20,7 @@ def sort_locs_by_cluster(input_locs, db_result):
     labels = db_result.labels_
     unique_labels = set(labels)
 
+    print(labels)
     cluster_locs = {}  # Use a regular dictionary (no default value needed)
     for k in unique_labels:
         cluster_locs[k] = []  # Initialize an empty list for the cluster
@@ -27,9 +29,9 @@ def sort_locs_by_cluster(input_locs, db_result):
 
     return cluster_locs
 
-
 def create_convex_hull(cluster_localisations:dict) -> list:
     cluster_convex_hull = []
+
     if not cluster_localisations:
         print("No clusters provided.")
         return cluster_convex_hull
@@ -73,10 +75,12 @@ def create_cluster_properties_table(cluster_data:dict, convex_hull:dict) -> pd.D
     cluster_areas = [convex_hull.volume for convex_hull in convex_hull]
     cluster_id = [cluster for cluster in list(cluster_data.keys()) if cluster >= 0]
     cluster_density = [number_of_loc / cluster_area for number_of_loc, cluster_area in zip(number_of_locs, cluster_areas)]
+    cluster_diameter = [2*math.sqrt(cluster_area/math.pi) for cluster_area in cluster_areas]
 
-    data = {"cluster id" : cluster_id,   
+    data = {"cluster id" : cluster_id,
             "number of localisations": number_of_locs,
-            "Cluster Area (\u03BCm\u00B2)": cluster_areas,
-            "Cluster density (locs/\u03BCm\u00B2)": cluster_density
+            "Cluster Size (nm)": cluster_diameter,
+            "Cluster Area (nm\u00B2)": cluster_areas,
+            "Cluster density (locs/nm\u00B2)": cluster_density
     }
     return data
